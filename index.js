@@ -1,16 +1,16 @@
-const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // 미들웨어 설정
 app.use(cors({
-    origin: 'http://localhost:3000', // 프론트엔드 URL
-    credentials: true // 쿠키와 자격 증명 정보를 허용
-  }));
-  
+    origin: 'http://localhost:3000',
+    credentials: true
+}));
+
 app.use(bodyParser.json());
 
 // 테스트용 API
