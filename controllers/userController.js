@@ -212,3 +212,107 @@ export const updateProfileImage = async (req, res) => {
     });
   }
 };
+
+// 로그인 컨트롤러
+export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // 이메일로 사용자 찾기
+    const user = dummyUsers.find((user) => user.email === email);
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "이메일이 올바르지 않습니다.",
+      });
+    }
+
+    // 비활성화된 계정 확인
+    if (!user.isActive) {
+      return res.status(401).json({
+        success: false,
+        message: "비활성화된 계정입니다.",
+      });
+    }
+
+    // 비밀번호 확인
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: "비밀번호가 올바르지 않습니다.",
+      });
+    }
+
+    // 성공 응답
+    res.status(200).json({
+      success: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+      },
+    });
+  } catch (error) {
+    console.error("로그인 오류:", error);
+    res.status(500).json({
+      success: false,
+      message: "서버 오류가 발생했습니다.",
+      error: error.message,
+    });
+  }
+};
+
+// 회원가입 컨트롤러
+export const signup = async (req, res) => {
+  try {
+    const { name, email, password, phoneNumber } = req.body;
+
+    // 이메일 중복 확인
+    const existingUser = dummyUsers.find((user) => user.email === email);
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "이미 가입된 이메일입니다.",
+      });
+    }
+
+    // 비밀번호 해시화
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // 새 사용자 생성
+    const newUser = {
+      id: dummyUsers.length + 1,
+      name,
+      email,
+      password: hashedPassword,
+      phoneNumber: phoneNumber || "",
+      profileImage: "",
+      resetPasswordToken: null,
+      resetPasswordExpires: null,
+      isActive: true,
+      deletedAt: null,
+    };
+
+    // 더미 유저 목록에 추가
+    dummyUsers.push(newUser);
+
+    // 성공 응답
+    res.status(201).json({
+      success: true,
+      user: {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+      },
+    });
+  } catch (error) {
+    console.error("회원가입 오류:", error);
+    res.status(500).json({
+      success: false,
+      message: "서버 오류가 발생했습니다.",
+      error: error.message,
+    });
+  }
+};

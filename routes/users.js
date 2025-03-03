@@ -54,9 +54,6 @@ const upload = multer({
 router.post("/login", userController.login);
 router.post("/signup", userController.signup);
 
-// 비밀번호 재설정 라우트
-router.post("/reset-password", userController.resetPassword);
-
 // 비밀번호 변경 라우트 (토큰 없이)
 router.post("/change-password", userController.changePassword);
 
