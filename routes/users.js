@@ -50,11 +50,15 @@ const upload = multer({
   fileFilter: fileFilter,
 });
 
+// 인증 라우트 추가
+router.post("/login", userController.login);
+router.post("/signup", userController.signup);
+
 // 비밀번호 재설정 라우트
 router.post("/reset-password", userController.resetPassword);
 
-// 회원 탈퇴 라우트
-router.delete("/delete-user", userController.deleteUser);
+// 비밀번호 변경 라우트 (토큰 없이)
+router.post("/change-password", userController.changePassword);
 
 // 회원 정보 조회 라우트
 router.get("/", userController.getUserInfo);
