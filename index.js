@@ -3,7 +3,6 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const authRoutes = require('./routes/authRoutes');
-// const authMiddleware = require('./middleware/authMiddleware');
 
 
 const app = express();
