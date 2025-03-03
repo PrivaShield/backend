@@ -1,31 +1,18 @@
-import express from "express";
-import cors from "cors";
-import bodyParser from "body-parser";
-import path from "path";
-import { fileURLToPath } from "url";
-import fs from "fs";
-import userRoutes from "./routes/users.js";
-import dbConfig from "./config/dbConfig.js";
-
-// ESM에서 __dirname 설정
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // 미들웨어 설정
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-    credentials: true,
-  })
-);
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+}));
 
+app.use(express.json());
 app.use(bodyParser.json());
-
-// 라우트 등록
-app.use("/api/users", userRoutes);
 
 // 테스트용 API
 app.get("/", (req, res) => {
