@@ -1,42 +1,50 @@
-// models/user.js
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import { DataTypes } from "sequelize";
+import sequelize from "../config/dbConfig.js";
 
-const userSchema = new Schema(
+const User = sequelize.define(
+  "User",
   {
     name: {
-      type: String,
-      default: "",
+      type: DataTypes.STRING,
+      defaultValue: "",
     },
     email: {
-      type: String,
-      required: true,
+      type: DataTypes.STRING,
+      allowNull: false,
       unique: true,
     },
     password: {
-      type: String,
-      required: true,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     phoneNumber: {
-      type: String,
-      default: "",
+      type: DataTypes.STRING,
+      defaultValue: "",
     },
     profileImage: {
-      type: String,
-      default: "", // 기본 프로필 이미지 경로
+      type: DataTypes.STRING,
+      defaultValue: "",
     },
-    resetPasswordToken: String,
-    resetPasswordExpires: Date,
+    resetPasswordToken: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    resetPasswordExpires: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
     isActive: {
-      type: Boolean,
-      default: true,
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
     },
     deletedAt: {
-      type: Date,
-      default: null,
+      type: DataTypes.DATE,
+      allowNull: true,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-module.exports = mongoose.model("User", userSchema);
+export default User;
