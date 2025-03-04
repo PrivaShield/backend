@@ -3,7 +3,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
-import * as userController from "../controllers/userController.js";
+import * as userController from "../controllers/userInfoController.js";
 
 // ESM에서 __dirname 설정
 const __filename = fileURLToPath(import.meta.url);

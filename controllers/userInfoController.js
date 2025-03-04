@@ -14,7 +14,6 @@ let dummyUsers = [
     email: "test@example.com",
     password: "$2b$10$GgAt862z7bNQTxlXXCF2vu8JXZ3XwZMVVYYpX.z4dtIa45U31RXpi", // password123의 해시
     name: "Test User",
-    phoneNumber: "010-1234-5678",
     profileImage: "",
     resetPasswordToken: null,
     resetPasswordExpires: null,
