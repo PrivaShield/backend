@@ -1,5 +1,4 @@
-import mysql from 'mysql2/promise';
-
+const mysql = require('mysql2/promise');
 // ssh 수동 연결 필수 
 // ssh -i "C:/privaShield-key.pem" -N -L 3307:privashielddb.cvoio4q4qfcn.ap-northeast-2.rds.amazonaws.com:3306 ubuntu@52.78.247.122
 
