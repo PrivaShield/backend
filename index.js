@@ -5,6 +5,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
 import userRoutes from "./routes/users.js";
+import authRoutes from "./routes/authRoutes.js";
 
 // ESM에서 __dirname 설정
 const __filename = fileURLToPath(import.meta.url);
@@ -25,6 +26,7 @@ app.use(bodyParser.json());
 
 // 라우트 등록
 app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
 
 // 테스트용 API
 app.get("/", (req, res) => {
