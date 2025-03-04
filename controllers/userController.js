@@ -1,26 +1,3 @@
-<<<<<<< HEAD
-// controllers/userController.js
-const User = require("../models/user");
-const bcrypt = require("bcrypt");
-
-// 비밀번호 재설정 컨트롤러
-exports.resetPassword = async (req, res) => {
-  try {
-    const { email, resetToken, newPassword } = req.body;
-
-    // 이메일과 토큰으로 사용자 찾기
-    const user = await User.findOne({
-      email: email,
-      resetPasswordToken: resetToken,
-      resetPasswordExpires: { $gt: Date.now() },
-    });
-
-    // 사용자가 없거나 토큰이 만료된 경우
-    if (!user) {
-      return res.status(400).json({
-        success: false,
-        message: "유효하지 않은 토큰이거나 만료되었습니다.",
-=======
 //controllers/userController.js
 import bcrypt from "bcrypt";
 import fs from "fs";
@@ -58,7 +35,6 @@ export const changePassword = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "사용자를 찾을 수 없습니다.",
->>>>>>> b6b4f859b82d3c9abe27289a685c9ecae9ac2308
       });
     }
 
@@ -66,26 +42,14 @@ export const changePassword = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-<<<<<<< HEAD
-    // 사용자 정보 업데이트
-    user.password = hashedPassword;
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpires = undefined;
-
-    await user.save();
-=======
     // 사용자 비밀번호 업데이트
     dummyUsers[userIndex].password = hashedPassword;
->>>>>>> b6b4f859b82d3c9abe27289a685c9ecae9ac2308
 
     res.status(200).json({
       success: true,
       message: "비밀번호가 성공적으로 변경되었습니다.",
     });
   } catch (error) {
-<<<<<<< HEAD
-    console.error("비밀번호 재설정 오류:", error);
-=======
     console.error("비밀번호 변경 오류:", error);
     res.status(500).json({
       success: false,
@@ -346,7 +310,6 @@ export const signup = async (req, res) => {
     });
   } catch (error) {
     console.error("회원가입 오류:", error);
->>>>>>> b6b4f859b82d3c9abe27289a685c9ecae9ac2308
     res.status(500).json({
       success: false,
       message: "서버 오류가 발생했습니다.",

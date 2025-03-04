@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-// index.js 파일 수정
-const express = require("express");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-=======
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
@@ -16,7 +10,6 @@ import authRoutes from "./routes/authRoutes.js";
 // ESM에서 __dirname 설정
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
->>>>>>> b6b4f859b82d3c9abe27289a685c9ecae9ac2308
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -31,15 +24,9 @@ app.use(
 
 app.use(bodyParser.json());
 
-<<<<<<< HEAD
-// 라우트 등록 - 일단 주석 처리
-// const userRoutes = require('./routes/users');
-// app.use('/api/users', userRoutes);
-=======
 // 라우트 등록
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
->>>>>>> b6b4f859b82d3c9abe27289a685c9ecae9ac2308
 
 // 테스트용 API
 app.get("/", (req, res) => {
@@ -58,8 +45,5 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // 서버 실행
 app.listen(PORT, () => {
   console.log(`✅ 서버 실행 중: http://localhost:${PORT}`);
-<<<<<<< HEAD
-=======
   console.log(`✅ 더미 데이터를 사용하여 서버가 실행되었습니다.`);
->>>>>>> b6b4f859b82d3c9abe27289a685c9ecae9ac2308
 });
