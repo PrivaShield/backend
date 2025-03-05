@@ -11,6 +11,7 @@ import authRoutes from "./routes/authRoutes.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -26,7 +27,12 @@ app.use(bodyParser.json());
 
 // 라우트 등록
 app.use("/api/users", userRoutes);
+<<<<<<< HEAD
 app.use("/api/auth", authRoutes);
+=======
+app.use('/api/auth', authRoutes);
+
+>>>>>>> feature/auth
 
 // 테스트용 API
 app.get("/", (req, res) => {

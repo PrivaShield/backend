@@ -1,8 +1,6 @@
-//routes/authRoutes.js
-import express from "express";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
-
+const express = require("express");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 const router = express.Router();
 
 // JWT 비밀키 (실제 환경에서는 환경 변수로 관리)
@@ -164,4 +162,4 @@ router.get("/verify", async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;
