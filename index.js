@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
-import userRoutes from "./routes/users.js";
+import userRoutes from "./routes/userInfoRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 
 // ESM에서 __dirname 설정
