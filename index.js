@@ -6,13 +6,16 @@ import { fileURLToPath } from "url";
 import fs from "fs";
 import userRoutes from "./routes/userInfoRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import dotenv from 'dotenv';
 
 // ESM에서 __dirname 설정
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+
 const app = express();
 const PORT = process.env.PORT || 5000;
+
 
 // 미들웨어 설정
 app.use(
@@ -23,10 +26,11 @@ app.use(
 );
 
 app.use(bodyParser.json());
-
+dotenv.config();
 // 라우트 등록
 app.use("/api/users", userRoutes);
-app.use("/api/auth", authRoutes);
+app.use('/api/auth', authRoutes);
+
 
 // 테스트용 API
 app.get("/", (req, res) => {
