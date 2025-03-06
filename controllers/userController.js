@@ -9,50 +9,6 @@ import { getConnection } from "../config/dbConfig.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 비밀번호 변경 컨트롤러 (토큰 없이)
-export const changePassword = async (req, res) => {
-  const connection = await getConnection();
-
-  try {
-    const { email, newPassword } = req.body;
-
-    // 이메일로 사용자 찾기
-    const [rows] = await connection.execute(
-      "SELECT * FROM MEMBER WHERE email = ?",
-      [email]
-    );
-
-    if (rows.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "사용자를 찾을 수 없습니다.",
-      });
-    }
-
-    // 비밀번호 해시화
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
-
-    // 사용자 비밀번호 업데이트
-    await connection.execute(
-      "UPDATE MEMBER SET password_hash = ? WHERE email = ?",
-      [hashedPassword, email]
-    );
-
-    res.status(200).json({
-      success: true,
-      message: "비밀번호가 성공적으로 변경되었습니다.",
-    });
-  } catch (error) {
-    console.error("비밀번호 변경 오류:", error);
-    res.status(500).json({
-      success: false,
-      message: "서버 오류가 발생했습니다.",
-      error: error.message,
-    });
-  }
-};
-
 // 회원 탈퇴 컨트롤러
 export const deleteUser = async (req, res) => {
   const connection = await getConnection();
@@ -158,41 +114,53 @@ export const getUserInfo = async (req, res) => {
 };
 
 // 프로필 정보 업데이트 컨트롤러 추가
+// controllers/userController.js의 updateProfile 함수 수정
 export const updateProfile = async (req, res) => {
-  const connection = await getConnection();
-
+  let connection = null;
   try {
     const { email, name } = req.body;
 
-    if (!email) {
+    // 데이터 유효성 검사
+    if (!email || !name) {
       return res.status(400).json({
         success: false,
-        message: "이메일 정보가 필요합니다.",
+        message: "이메일과 이름을 모두 제공해주세요.",
       });
     }
 
-    // 이메일로 사용자 찾기
-    const [rows] = await connection.execute(
+    // 데이터베이스 연결
+    connection = await getConnection();
+
+    // 사용자 존재 여부 확인
+    const [userRows] = await connection.execute(
       "SELECT * FROM MEMBER WHERE email = ?",
       [email]
     );
 
-    if (rows.length === 0) {
+    if (userRows.length === 0) {
       return res.status(404).json({
         success: false,
         message: "사용자를 찾을 수 없습니다.",
       });
     }
 
-    // 사용자 이름 업데이트
+    // 프로필 업데이트
     await connection.execute(
       "UPDATE MEMBER SET user_name = ? WHERE email = ?",
       [name, email]
     );
 
+    // 업데이트된 사용자 정보 조회
+    const [updatedRows] = await connection.execute(
+      "SELECT user_name FROM MEMBER WHERE email = ?",
+      [email]
+    );
+
     res.status(200).json({
       success: true,
-      message: "프로필 정보가 성공적으로 업데이트되었습니다.",
+      data: {
+        user_name: updatedRows[0].user_name,
+      },
     });
   } catch (error) {
     console.error("프로필 업데이트 오류:", error);
@@ -201,6 +169,14 @@ export const updateProfile = async (req, res) => {
       message: "서버 오류가 발생했습니다.",
       error: error.message,
     });
+  } finally {
+    if (connection) {
+      try {
+        await connection.end();
+      } catch (err) {
+        console.error("연결 종료 오류:", err);
+      }
+    }
   }
 };
 
