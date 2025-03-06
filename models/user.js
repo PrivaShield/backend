@@ -1,3 +1,4 @@
+//models/users.js
 import { DataTypes } from "sequelize";
 import sequelize from "../config/dbConfig.js";
 
@@ -16,10 +17,6 @@ const User = sequelize.define(
     password: {
       type: DataTypes.STRING,
       allowNull: false,
-    },
-    phoneNumber: {
-      type: DataTypes.STRING,
-      defaultValue: "",
     },
     profileImage: {
       type: DataTypes.STRING,

@@ -1,9 +1,10 @@
+//routes/users.js
 import express from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
-import * as userController from "../controllers/userInfoController.js";
+import * as userController from "../controllers/userController.js";
 
 // ESM에서 __dirname 설정
 const __filename = fileURLToPath(import.meta.url);
@@ -51,14 +52,11 @@ const upload = multer({
 });
 
 // 인증 라우트 추가
-// router.post("/login", userController.login);
-// router.post("/signup", userController.signup);
-
-// 비밀번호 재설정 라우트
-// router.post("/reset-password", userController.resetPassword);
+//router.post("/login", userController.login);
+//router.post("/signup", userController.signup);
 
 // 비밀번호 변경 라우트 (토큰 없이)
-// router.post("/change-password", userController.changePassword);
+//router.post("/change-password", userController.changePassword);
 
 // 회원 정보 조회 라우트
 router.get("/", userController.getUserInfo);
@@ -69,5 +67,11 @@ router.patch(
   upload.single("profileImage"),
   userController.updateProfileImage
 );
+
+// 프로필 정보 업데이트 라우트 추가
+router.patch("/update-profile", userController.updateProfile);
+
+// 회원 탈퇴 라우트
+router.delete("/delete-user", userController.deleteUser);
 
 export default router;

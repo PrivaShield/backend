@@ -1,28 +1,28 @@
-import mysql from 'mysql2/promise';
+import mysql from "mysql2/promise";
 
 const dbConfig = {
-  host: 'localhost',
+  host: "localhost",
   port: 3307,
-  user: 'privaShield',
-  password: 'privashield11',  // 보안상 .env 사용 권장
-  database: 'safe_db',
+  user: "privaShield",
+  password: "privashield11", // 보안상 .env 사용 권장
+  database: "safe_db",
 };
 
 export async function testDBConnection() {
   try {
     const connection = await mysql.createConnection(dbConfig);
-    console.log('✅ MySQL 연결 성공!');
+    console.log("✅ MySQL 연결 성공!");
 
     // 데이터베이스 선택
-    await connection.query('USE safe_db');
+    await connection.query("USE safe_db");
 
     // 모든 테이블 이름 조회
-    const [rows] = await connection.execute('SHOW TABLES');
-    console.log('모든 테이블 이름:', rows);
+    const [rows] = await connection.execute("SHOW TABLES");
+    console.log("모든 테이블 이름:", rows);
 
     await connection.end();
   } catch (error) {
-    console.error('❌ MySQL 연결 실패:', error.message);
+    console.error("❌ MySQL 연결 실패:", error.message);
   }
 }
 
@@ -31,5 +31,5 @@ export async function getConnection() {
   return await mysql.createConnection(dbConfig);
 }
 
-// ssh 수동 연결 필수 
+// ssh 수동 연결 필수
 // ssh -i "C:/privaShield-key.pem" -N -L 3307:privashielddb.cvoio4q4qfcn.ap-northeast-2.rds.amazonaws.com:3306 ubuntu@52.78.247.122
