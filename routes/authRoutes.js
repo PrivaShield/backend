@@ -2,6 +2,10 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { getConnection } from '../config/dbConfig.js';
+import dotenv from 'dotenv';
+import  nodemailer from 'nodemailer';
+dotenv.config();
+
 
 const router = express.Router();
 
@@ -166,4 +170,124 @@ router.get("/verify", async (req, res) => {
   }
 });
 
-export default router;
+
+
+router.post('/check-email', async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    alert("이메일을 입력해주세요.");
+    return; // 이메일이 없으면 함수 실행을 중지
+  }
+
+  console.log("👤 이메일 중복확인 라우트 호출됨");
+  const connection = await getConnection();
+
+  try {
+    const [result] = await connection.query('SELECT * FROM MEMBER WHERE email = ?', [email]);
+    
+    // 이메일 존재 여부를 응답으로 보냄
+    if (result && Array.isArray(result) && result.length > 0) {
+      res.json({ exists: true, message: '이메일이 존재합니다.' });
+    } else {
+      res.json({ exists: false, message: '이메일이 등록되지 않았습니다.' });
+    }
+    
+  } catch (error) {
+    console.error('이메일 확인 중 오류:', error);
+    res.status(500).json({ message: '서버 오류가 발생했습니다.' });
+  }
+});
+
+router.post('/send-verification-code', async (req, res) => {
+  const { email } = req.body;
+  const verificationCode = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
+  console.log('생성된 인증 코드:', verificationCode);
+
+  try {
+    // Nodemailer 트랜스포터 생성
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER, // 환경 변수 사용
+        pass: process.env.EMAIL_PASS  // 환경 변수 사용
+      }
+    });
+
+    // 이메일 전송 옵션
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'PrivaShield 비밀번호 찾기 인증 코드',
+      text: `귀하의 인증 코드는 ${verificationCode} 입니다. 5분 내에 인증을 완료해주세요.`
+    };
+
+    // 이메일 전송
+    await transporter.sendMail(mailOptions);
+
+    // 인증 코드를 데이터베이스에 저장하는 것도 고려해볼 수 있음
+    res.json({ verificationCode });
+  } catch (error) {
+    console.error('인증 코드 전송 오류:', error);
+    res.status(500).json({ message: '인증 코드 전송에 실패했습니다.' });
+  }
+});
+
+router.post("/reset-password", async (req, res) => {
+  console.log("🔐 비밀번호 재설정 라우트 호출됨");
+  const connection = await getConnection();
+
+  try {
+    const { email, newPassword } = req.body;
+
+    // 비밀번호 입력 확인
+    if (!newPassword) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "새 비밀번호를 입력해주세요." 
+      });
+    }
+
+    // 비밀번호 복잡성 검사
+    if (newPassword.length < 8) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "비밀번호는 최소 8자 이상이어야 합니다." 
+      });
+    }
+
+    // 새 비밀번호 해시화
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    console.log("new 비밀번호 변경", hashedPassword);
+    // 데이터베이스에 새 비밀번호 업데이트
+    const [updateResult] = await connection.execute(
+      'UPDATE MEMBER SET password_hash = ? WHERE email = ?',
+      [hashedPassword,email]  // 기존에 인증된 이메일 사용
+    );
+
+    // 업데이트 확인
+    if (updateResult.affectedRows === 0) {
+      console.log("❌ 비밀번호 업데이트 실패");
+      return res.status(500).json({ 
+        success: false, 
+        message: "비밀번호 재설정에 실패했습니다." 
+      });
+    }
+
+    console.log("✅ 비밀번호 재설정 성공");
+    res.status(200).json({ 
+      success: true, 
+      message: "비밀번호가 성공적으로 재설정되었습니다." 
+    });
+
+  } catch (error) {
+    console.error("🔴 비밀번호 재설정 중 오류 발생:", error);
+    res.status(500).json({ 
+      success: false, 
+      message: "서버 오류가 발생했습니다." 
+    });
+  }
+});
+
+  export default router;
