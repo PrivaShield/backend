@@ -6,6 +6,7 @@ import { fileURLToPath } from "url";
 import fs from "fs";
 import userRoutes from "./routes/users.js";
 import authRoutes from "./routes/authRoutes.js";
+import dashboardRoutes from "./routes/dashboard.js";
 import dotenv from "dotenv";
 
 // ESM에서 __dirname 설정
@@ -28,6 +29,7 @@ dotenv.config();
 // 라우트 등록
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 // 테스트용 API
 app.get("/", (req, res) => {
