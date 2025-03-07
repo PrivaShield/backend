@@ -68,6 +68,9 @@ router.patch(
   userController.updateProfileImage
 );
 
+// 수정된 코드
+router.post("/update-profile", userController.updateProfile);
+
 // 회원 탈퇴 라우트
 router.delete("/delete-user", userController.deleteUser);
 
